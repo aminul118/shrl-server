@@ -28,6 +28,9 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    // * DB collections Starts
+
     const upcomingEventCollection = client
       .db("shrlDB")
       .collection("upcomingEvents");
@@ -37,11 +40,13 @@ async function run() {
     const eventsCollection = client.db("shrlDB").collection("events");
     const teamMembersCollection = client.db("shrlDB").collection("teamMembers");
 
-    //  Upcoming Events
+    // * DB collections End
+
+    //*  Upcoming Events Starts
 
     app.post("/upcoming-events", async (req, res) => {
       const neWEvent = req.body;
-      console.log(neWEvent);
+      // console.log(neWEvent);
       const result = await upcomingEventCollection.insertOne(neWEvent);
       res.send(result);
     });
@@ -68,7 +73,7 @@ async function run() {
     app.put("/upcoming-events/:id", async (req, res) => {
       const id = req.params.id;
       const updateEvent = req.body;
-      console.log(updateEvent);
+      // console.log(updateEvent);
       const query = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const event = {
@@ -90,8 +95,9 @@ async function run() {
 
       res.send(result);
     });
+    //*  Upcoming Events End
 
-    // Scrolling Text
+    //* Scrolling Text Start
 
     app.post("/scrolling", async (req, res) => {
       const text = req.body;
@@ -118,7 +124,10 @@ async function run() {
       res.send(result);
     });
 
-    // ! Events
+    //* Scrolling Text End
+
+    // * Events Starts
+
     app.post("/events", async (req, res) => {
       const event = req.body;
       const result = await eventsCollection.insertOne(event);
@@ -136,7 +145,10 @@ async function run() {
       res.send(result);
     });
 
-    // ! Team Members
+    // * Events End
+
+    // * Team Members Starts
+
     app.get("/members", async (req, res) => {
       const result = await teamMembersCollection.find().toArray();
       res.send(result);
@@ -148,6 +160,8 @@ async function run() {
       const result = await teamMembersCollection.findOne(query);
       res.send(result);
     });
+
+    // * Team Members End
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
