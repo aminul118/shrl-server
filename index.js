@@ -130,11 +130,15 @@ async function run() {
 
     app.post("/events", async (req, res) => {
       const event = req.body;
+      event.createdAt = new Date();
       const result = await eventsCollection.insertOne(event);
       res.send(result);
     });
     app.get("/events", async (req, res) => {
-      const result = await eventsCollection.find().toArray();
+      const result = await eventsCollection
+        .find()
+        .sort({ createdAt: -1 })
+        .toArray(); // Sort by createdAt descending
       res.send(result);
     });
 
@@ -142,6 +146,12 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await eventsCollection.findOne(query);
+      res.send(result);
+    });
+    app.delete("/event/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await eventsCollection.deleteOne(query);
       res.send(result);
     });
 
